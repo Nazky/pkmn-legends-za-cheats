@@ -15,3 +15,9 @@
 
 [Money]
 04200000 47C70960 000F423F
+
+[Active Pokemons HP Doesnt Decrease ON]
+04000000 001CDF70 D503201F
+
+[Active Pokemons HP Doesnt Decrease OFF]
+04000000 001CDF70 B90052B8

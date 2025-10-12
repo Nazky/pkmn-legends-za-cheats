@@ -20,7 +20,7 @@ All cheat codes in this repository are sourced from the GBAtemp community. Speci
 ### Individual Contributors
 
 When adding new codes, please credit the original poster:
-- **[ZGamer30]** - [Items no decrease, Player does not blackout, Medals, Money] (https://gbatemp.net/members/zgamer30.736632/)
+- **[ZGamer30]** - [Items no decrease, Player does not blackout, Medals, Money, Active Pokemons HP Doesnt Decrease] (https://gbatemp.net/members/zgamer30.736632/)
 
 
 
