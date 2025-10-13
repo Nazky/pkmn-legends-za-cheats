@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributors Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff;
+        }
+        .contributor-list {
+            margin-top: 20px;
+        }
+        .contributor {
+            background-color: #3c3c3c;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: move;
+        }
+        .contributor.dragging {
+            opacity: 0.5;
+        }
+        .contributor h3 {
+            margin: 0;
+            color: #4caf50;
+        }
+        .contributor a {
+            color: #90caf9;
+            text-decoration: none;
+        }
+        .contributor a:hover {
+            text-decoration: underline;
+        }
+        .contributor ul {
+            margin: 10px 0 0 20px;
+            padding: 0;
+        }
+        .contributor li {
+            list-style-type: disc;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+        .form-container input, .form-container textarea, .form-container button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: none;
+            border-radius: 5px;
+        }
+        .form-container input, .form-container textarea {
+            background-color: #4a4a4a;
+            color: #e0e0e0;
+        }
+        .form-container button, .save-btn {
+            background-color: #4caf50;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .form-container button:hover, .save-btn:hover {
+            background-color: #45a049;
+        }
+        .form-container textarea {
+            resize: vertical;
+        }
+        .edit-btn, .delete-btn {
+            background-color: #2196f3;
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .edit-btn:hover {
+            background-color: #1976d2;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        .drop-zone {
+            border: 2px dashed #4a4a4a;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #3c3c3c;
+            border-radius: 5px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .drop-zone.dragover {
+            border-color: #4caf50;
+            background-color: #4a4a4a;
+        }
+        .drop-zone p {
+            margin: 0;
+            color: #e0e0e0;
+        }
+        .button-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add/Remove or Edit cheat contributers</h1>
+        <p>When adding new codes, please credit the original contributor below:</p>
+        <div class="drop-zone" id="dropZone">
+            <p>Drag and drop your README.md file here</p>
+        </div>
+        <div class="button-container">
+            <button class="save-btn" onclick="saveFile()">Save File</button>
+        </div>
+        <div class="form-container">
+            <input type="text" id="username" placeholder="Contributor Username">
+            <input type="text" id="profileUrl" placeholder="Profile URL (e.g., https://gbatemp.net/members/username.123456/)">
+            <textarea id="contributions" placeholder="Contributions (one per line, e.g., Items no decrease)"></textarea>
+            <button onclick="addOrUpdateContributor()">Add/Update Contributor</button>
+        </div>
+        <div class="contributor-list" id="contributorList"></div>
+    </div>
+
+    <script>
+        let contributors = []; // Start with empty array
+        let originalReadmeContent = ""; // Store original README content for full download
+
+        // Clear localStorage on page load to ensure no residual data
+        localStorage.clear();
+
+        // Handle drag and drop
+        const dropZone = document.getElementById("dropZone");
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("dragover");
+        });
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.classList.remove("dragover");
+        });
+        dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("dragover");
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith(".md")) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    originalReadmeContent = event.target.result; // Store full content
+                    parseReadme(originalReadmeContent);
+                    renderContributors();
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please drop a valid .md file.");
+            }
+        });
+
+        // Parse the README.md content
+        function parseReadme(content) {
+            contributors = []; // Clear contributors
+            // Match "Individual Contributors" section, stopping at next "##" heading
+            const contributorSectionRegex = /### Individual Contributors[\s\S]*?(?=##|$)/;
+            const sectionMatch = content.match(contributorSectionRegex);
+            if (!sectionMatch) {
+                alert("No 'Individual Contributors' section found in the README.");
+                return;
+            }
+
+            const contributorRegex = /\-\s*\*\*\[([^\]]+)\]\*\*\s*-\s*\[([^\]]+)\]\s*\(([^)]+)\)/g;
+            let match;
+            while ((match = contributorRegex.exec(sectionMatch[0])) !== null) {
+                const username = match[1].trim();
+                const contributions = match[2].split(",").map(item => item.trim());
+                const profileUrl = match[3].trim();
+                contributors.push({ username, profileUrl, contributions });
+            }
+
+            // Save to localStorage
+            localStorage.setItem("contributors", JSON.stringify(contributors));
+        }
+
+        function renderContributors() {
+            const list = document.getElementById("contributorList");
+            list.innerHTML = "";
+            contributors.forEach((contributor, index) => {
+                const div = document.createElement("div");
+                div.className = "contributor";
+                div.draggable = true;
+                div.dataset.index = index;
+                div.innerHTML = `
+                    <h3>${contributor.username} <a href="${contributor.profileUrl}" target="_blank">[Profile]</a></h3>
+                    <ul>
+                        ${contributor.contributions.map(cont => `<li>${cont}</li>`).join("")}
+                    </ul>
+                    <span class="edit-btn" onclick="editContributor(${index})">Edit</span>
+                    <span class="delete-btn" onclick="deleteContributor(${index})">Delete</span>
+                `;
+                list.appendChild(div);
+            });
+
+            // Add drag and drop functionality for contributors
+            const contributorItems = document.querySelectorAll(".contributor");
+            contributorItems.forEach(item => {
+                item.addEventListener("dragstart", (e) => {
+                    item.classList.add("dragging");
+                    e.dataTransfer.setData("text/plain", item.dataset.index);
+                });
+                item.addEventListener("dragend", () => {
+                    item.classList.remove("dragging");
+                });
+                item.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                });
+                item.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    const draggedIndex = e.dataTransfer.getData("text/plain");
+                    const targetIndex = item.dataset.index;
+                    reorderContributors(draggedIndex, targetIndex);
+                });
+            });
+
+            // Save to localStorage
+            localStorage.setItem("contributors", JSON.stringify(contributors));
+        }
+
+        function addOrUpdateContributor() {
+            const username = document.getElementById("username").value.trim();
+            const profileUrl = document.getElementById("profileUrl").value.trim();
+            const contributions = document.getElementById("contributions").value
+                .split("\n")
+                .map(line => line.trim())
+                .filter(line => line !== "");
+
+            if (!username || !profileUrl || contributions.length === 0) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            const existingIndex = contributors.findIndex(c => c.username === username);
+            if (existingIndex !== -1) {
+                // Update existing contributor
+                contributors[existingIndex] = { username, profileUrl, contributions };
+            } else {
+                // Add new contributor
+                contributors.push({ username, profileUrl, contributions });
+            }
+
+            // Clear form
+            document.getElementById("username").value = "";
+            document.getElementById("profileUrl").value = "";
+            document.getElementById("contributions").value = "";
+
+            renderContributors();
+        }
+
+        function editContributor(index) {
+            const contributor = contributors[index];
+            document.getElementById("username").value = contributor.username;
+            document.getElementById("profileUrl").value = contributor.profileUrl;
+            document.getElementById("contributions").value = contributor.contributions.join("\n");
+        }
+
+        function deleteContributor(index) {
+            if (confirm("Are you sure you want to delete this contributor?")) {
+                contributors.splice(index, 1);
+                renderContributors();
+            }
+        }
+
+        function reorderContributors(fromIndex, toIndex) {
+            const [movedContributor] = contributors.splice(fromIndex, 1);
+            contributors.splice(toIndex, 0, movedContributor);
+            renderContributors();
+        }
+
+        function generateContributorsMarkdown() {
+            let markdownContent = `### Individual Contributors\n\nWhen adding new codes, please credit the original poster:\n`;
+            contributors.forEach(contributor => {
+                markdownContent += `- **[${contributor.username}]** - [${contributor.contributions.join(", ")}] (${contributor.profileUrl})\n`;
+            });
+            return markdownContent;
+        }
+
+        function saveFile() {
+            if (!originalReadmeContent) {
+                alert("Please upload a README.md file first to save the updated README.");
+                return;
+            }
+            const contributorSectionRegex = /### Individual Contributors[\s\S]*?(?=##|$)/;
+            const updatedContent = originalReadmeContent.replace(
+                contributorSectionRegex,
+                generateContributorsMarkdown()
+            );
+            const blob = new Blob([updatedContent], { type: "text/markdown" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "README.md";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
