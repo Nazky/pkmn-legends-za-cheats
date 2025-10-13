@@ -2,6 +2,8 @@
 
 A collection of cheat codes for Pokemon Legends Z-A, compatible with Atmosphere and other custom firmware.
 
+To learn more check out our discussion thread over on GBATemp. https://gbatemp.net/threads/pokemon-legends-za-cheat-repository.676138/#post-10743339
+
 ## Game Version
 These codes are made for v1.0.1 of Pokemon Legends Z-A
 
