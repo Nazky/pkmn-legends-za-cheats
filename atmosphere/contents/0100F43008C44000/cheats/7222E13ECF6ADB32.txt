@@ -1,12 +1,6 @@
 [Battle Tickets off post battle ZA登峰战券点战后9999 关闭]
 04000000 00BB301C 0B160108
 
-[Items No Decrease ON]
-04000000 007AAC98 D503201F
-
-[Items No Decrease OFF]
-04000000 007AAC98 F9000102
-
 [Medals]
 04200000 490E804C 0000270F
 
