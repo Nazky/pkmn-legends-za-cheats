@@ -26,6 +26,7 @@ When adding new codes, please credit the original poster:
 - **[dragon2snow]** - [金钱99999999, ZA登峰战券点战后9999 关闭, ZA登峰战券点战后9999 开启, 精灵球999 首次使用存档重启] (https://gbatemp.net/members/dragon2snow.572724/)
 - **[stoned]** - [Add 999 Masterballs, Add 999 Mega Crystals, 999.999 Money, 9999 Royal Medals, 999 Candy] (https://gbatemp.net/members/stoned.347253/)
 - **[GWalrus]** - [MAX MONEY, 999 CHERISH BALLS, 999 MASTERBALLS, 999 MEGA SHARDS, 999 COLOURFUL SCREWS, 999 XL XP] (https://gbatemp.net/members/gwalrus.771328/)
+- **[Blitz425]** - [Chesnaughtite, Delphoxite, Greninjite] (https://gbatemp.net/members/blitz425.573058/)
 ## Contributing
 
 If you have new cheats to add:
