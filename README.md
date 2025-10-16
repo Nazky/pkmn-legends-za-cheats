@@ -9,11 +9,11 @@ These codes are made for v1.0.1 of Pokemon Legends Z-A
 
 ## How to Use
 
-1. Navigate to your SD card's atmosphere folder: `atmosphere/contents/[TITLE_ID]/cheats/`
-2. Create the folder structure if it doesn't exist
-3. Copy the cheat file to this location
-4. Launch the game and press `L + Down + Right Stick` (default) to open the cheat menu
-5. Enable the cheats you want to use
+1. Download the latest release (https://github.com/ItsDeidara/pkmn-legends-za-cheats/releases)
+2. Extract it to the root of your SD card
+3. Launch the game and press `L + Down + Right Stick` (default) to open the cheat menu
+4. Enable the cheats you want to use
+
 
 ## Credits
 
