@@ -1,7 +1,7 @@
 # Pokemon Legends ZA | Save Repair
 ## How to use
 1. Get you'r save using [JKSV](https://github.com/J-D-K/JKSV), or if you are using a emulator, right click and choose 'Open User Save Directory' or 'Open Save Data Location'.
-2. Copy you'r save on you'r pc, inside this folder.
+2. Copy you'r save on you'r pc, inside the 'plza_save_repair' folder.
 3. Install [Python](https://www.python.org/downloads/).
 4. Once [Python](https://www.python.org/downloads/) is installed, run this command in you'r terminal :
 ```bash
